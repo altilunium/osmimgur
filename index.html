@@ -195,7 +195,7 @@ attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap
 function onEachFeature(feature, layer) {
     // does this feature have a property named popupContent?
     if (feature.properties && feature.properties.image) {
-        layer.bindPopup("<img src='"+feature.properties.image+"'>");
+        layer.bindPopup("<img src='"+feature.properties.image+"'><br><a target='_blank' href='"+feature.properties.image+"'>Image license</a>");
     }
 }
 
