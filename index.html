@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pocketmap</title>
+    <link rel="icon" href="logo.png" type="image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="leaflet.css" />
+    <link rel="stylesheet" href="MarkerCluster.css" />
+    <link rel="stylesheet" href="MarkerCluster.Default.css" />
+    <script src="leaflet.js"></script>
+    <script src="leaflet.markercluster-src.js"></script>
+    <script src="dexie.js"></script>
+    
+
+
+
+
+<style>
+@font-face {
+    font-family: 'Noto';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Open Sans Regular'),url('r/noto.woff2') format('woff');
+}
+
+
+html,body,#mapid {
+height: 100%;
+width: 100%;
+left:0px;
+position: fixed;
+top:0px;
+}	
+
+img {
+    width : 300px;
+}
+
+#titl{
+	width: 70px;
+    height:70px;
+    border-radius: 90px;
+	position: fixed;
+	right:20px;
+	bottom:20px;
+	background-color: #3232e6;
+    z-index: 30;	
+}
+
+#titl2{
+	width: 70px;
+    height:70px;
+    border-radius: 90px;
+	position: fixed;
+	left:20px;
+	bottom:20px;
+	background-color:red;
+    z-index: 30;
+    display: none;	
+}
+
+.ppp{
+  display: fixed;
+}
+
+#tw{
+    position:fixed;
+    margin:0 auto;
+    background-color: white;
+    width:100%;
+    height:100%;
+    z-index: 20;
+    top:0px;
+    left:0px;
+    display:none;
+   
+}
+
+#main-txtbox{
+    width: 95%;
+    border: 0px;
+    padding-left: 5%;
+    overflow: hidden;
+    resize: none;
+    font-family: 'Noto';
+    color: #1A1A1B;
+    font-size: 14px;
+    line-height: 21px;
+    font-weight: 400;
+    padding-bottom: 500px;
+    margin-top: 47px;
+    max-width: 750px;
+
+}
+
+#main-txtbox:focus-visible{
+    outline: none;
+}
+
+.leaflet-popup-content img{
+    width: 180px;
+}
+
+.leaflet-tile-pane {
+  -webkit-filter: grayscale(100%);
+  filter: grayscale(100%);
+}
+
+</style>
+</head>
+<body>
+<div id="titl" onclick="bc()"></div>
+<div id="titl2" onclick="bc2()"></div>
+<div id="tw"><div id="main-txtbox" contenteditable></div></div>
+    
+<div id="mapid"></div>
+
+
+<script src="imgur2.js"></script>
+<script>
+
+
+var db = new Dexie("mapDB");
+db.version(1).stores({
+    places: "++id, lat,lon,usr,syn",
+    mapState: "++k, lat,lon,z"
+});
+
+db.version(2).stores({
+    places: "++id, lat,lon,usr,syn",
+    mapState: "++k, lat,lon,z"
+}).upgrade()
+
+
+
+
+var map = L.map('mapid',{ preferCanvas:true, zoomControl: false }).setView({lat: -6.2845007732768465, lng:  107.00623512268068},14)
+
+//https://tile.tracestrack.com/_/{z}/{x}/{y}.png?key=fa2a6e930336f98bb7b22578e3c082b3&style=grayscale
+//https://maps.omniscale.net/v2/{id}/style.grayscale/{z}/{x}/{y}.png
+//https://tile.tracestrack.com/_/{z}/{x}/{y}.png?key=fa2a6e930336f98bb7b22578e3c082b3
+
+L.tileLayer(
+  'https://tile.tracestrack.com/_/{z}/{x}/{y}.png?key=fa2a6e930336f98bb7b22578e3c082b3', {
+    maxZoom: 18,
+    attribution: 'Data: © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>, <a href="https://worldcover2021.esa.int">ESA WorldCover</a>; Maps © <a href="https://www.tracestrack.com/">Tracestrack</a>'
+  }).addTo(map);
+
+
+async function setFocus(){
+    db.transaction("rw",db.mapState, function*(){
+    var points = yield db.mapState.where({k:1}).first();
+    if (points){
+        map.setView({lat:points.lat, lng:points.lon},points.z)
+        glat = points.lat
+        glon = points.lon 
+    }
+
+
+    console.log("HEAAA!")
+    console.log(points)
+    console.log("BRUH")
+    })
+}
+setFocus()
+
+
+map.on('zoomend',function(e) {
+   console.log(e.target.getCenter());
+   console.log(e.target.getZoom());
+   //db.friends.put({id: 4, name: "Foo", age: 33});
+
+
+//mapState: "++k, lat,lon,z"
+db.transaction("rw", db.mapState, function*(){
+    var p = yield db.mapState.put({
+        k:1,
+        lat: e.target.getCenter().lat,
+        lon : e.target.getCenter().lng,
+        z : e.target.getZoom()
+    })
+})
+
+
+})
+
+
+/*
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+maxZoom: 19,
+attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
+}).addTo(map);
+*/
+
+function onEachFeature(feature, layer) {
+    // does this feature have a property named popupContent?
+    if (feature.properties && feature.properties.image) {
+        layer.bindPopup("<img src='"+feature.properties.image+"'>");
+    }
+}
+
+/*
+L.geoJSON(a, {
+    onEachFeature: onEachFeature
+}).addTo(map);
+*/
+var markers = L.markerClusterGroup();
+markers.addLayer(L.geoJSON(a, {
+    onEachFeature: onEachFeature
+}));
+map.addLayer(markers)
+
+
+L.control.scale().addTo(map);
+
+
+
+
+</script>
+</body>
+</html>
+
+
