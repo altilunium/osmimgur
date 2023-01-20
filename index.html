@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Pocketmap</title>
-    <link rel="icon" href="logo.png" type="image/x-icon">
+
+<meta charset="UTF-8">
+    <title>osmimgur</title>
+    <link rel="icon" href="https://raw.githubusercontent.com/altilunium/sakumaps/main/logo.png" type="image/x-icon">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="leaflet.css" />
     <link rel="stylesheet" href="MarkerCluster.css" />
@@ -109,7 +111,7 @@ img {
 </style>
 </head>
 <body>
-<div id="titl" onclick="bc()"></div>
+
 <div id="titl2" onclick="bc2()"></div>
 <div id="tw"><div id="main-txtbox" contenteditable></div></div>
     
@@ -143,7 +145,7 @@ var map = L.map('mapid',{ preferCanvas:true, zoomControl: false }).setView({lat:
 L.tileLayer(
   'https://tile.tracestrack.com/_/{z}/{x}/{y}.png?key=fa2a6e930336f98bb7b22578e3c082b3', {
     maxZoom: 18,
-    attribution: 'Data: © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>, <a href="https://worldcover2021.esa.int">ESA WorldCover</a>; Maps © <a href="https://www.tracestrack.com/">Tracestrack</a>'
+    attribution: ' <a href="https://github.com/altilunium/osmimgur">osmimgur v23.1.20</a> | Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Map render © <a href="https://www.tracestrack.com/">Tracestrack</a>'
   }).addTo(map);
 
 
