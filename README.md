@@ -8,6 +8,3 @@ See tagged imgur images on OSM
 * Documentation : https://www.openstreetmap.org/user/rtnf/diary/400783
 * This is just a static data. New OSM data won't automatically be shown on this map.
 
-## Changelog
-### v23.1.20
-* January 20, 2023 data update : 12,989 photos
